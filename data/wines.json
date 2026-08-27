@@ -4,7 +4,7 @@
     "rank": 1,
     "juanScore": 95,
     "rankReason": "Es el conjunto más completo y respaldado de la cava: un corte complejo, tanino fino, frescura y roble integrado, con dos puntajes de 94.",
-    "rankingUpdatedAt": "2026-08-26",
+    "rankingUpdatedAt": "2026-08-27",
     "name": "Finca Decero Signature Red Blend",
     "vintage": 2022,
     "winery": "Finca Decero",
@@ -16,7 +16,10 @@
     "aging": "14 meses en barricas de roble francés",
     "cellarUntil": 2029,
     "alcohol": null,
-    "awards": ["Tim Atkin · 94 pts", "Descorchados · 94 pts"],
+    "awards": [
+      "Tim Atkin · 94 pts",
+      "Descorchados · 94 pts"
+    ],
     "quantity": 1,
     "addedAt": "2026-08-26",
     "accent": "#76223a",
@@ -29,7 +32,12 @@
     "aroma": "Frutos negros, cassis, ciruelas, violetas, especias, grafito, tabaco y cacao.",
     "palate": "Amplio y estructurado, con taninos firmes de grano fino, frescura equilibrada y final largo.",
     "servingAdvice": "Abrilo entre 45 y 60 minutos antes y servilo a 16–18 °C.",
-    "pairing": ["Bife de chorizo o punta de costilla", "Pastas con scarparo o puttanesca", "Quesos Gouda o Mar del Plata", "Hongos y vegetales asados"],
+    "pairing": [
+      "Bife de chorizo o punta de costilla",
+      "Pastas con scarparo o puttanesca",
+      "Quesos Gouda o Mar del Plata",
+      "Hongos y vegetales asados"
+    ],
     "learning": "En un blend, cada variedad aporta una pieza distinta: estructura, aroma, frescura o textura. El objetivo no es sentirlas separadas, sino reconocer cómo construyen un vino más completo."
   },
   {
@@ -37,7 +45,7 @@
     "rank": 2,
     "juanScore": 92,
     "rankReason": "La añada con más evolución, gran amplitud y persistencia, respaldada por cuatro críticos internacionales.",
-    "rankingUpdatedAt": "2026-08-26",
+    "rankingUpdatedAt": "2026-08-27",
     "name": "Cicchitti Gran Reserva Malbec",
     "vintage": 2021,
     "winery": "Bodega Cicchitti",
@@ -50,7 +58,12 @@
     "vinificationMethod": "Sombrero sumergido",
     "cellarUntil": 2028,
     "alcohol": null,
-    "awards": ["Wine Enthusiast · 93 pts", "Descorchados · 92 pts", "James Suckling · 91 pts", "Wine Advocate · 90 pts"],
+    "awards": [
+      "Wine Enthusiast · 93 pts",
+      "Descorchados · 92 pts",
+      "James Suckling · 91 pts",
+      "Wine Advocate · 90 pts"
+    ],
     "quantity": 1,
     "addedAt": "2026-08-26",
     "accent": "#4d1724",
@@ -63,7 +76,12 @@
     "aroma": "Cerezas, ciruelas, moras, violetas y un contraste ahumado intenso.",
     "palate": "Amplio, carnoso y firme, con fruta, especias, tostado y un final largo.",
     "servingAdvice": "Abrilo unos 45 minutos antes y servilo a 16–18 °C.",
-    "pairing": ["Lomo al Strogonoff", "Asado u osobuco", "Guisos de cocción lenta", "Quesos estacionados"],
+    "pairing": [
+      "Lomo al Strogonoff",
+      "Asado u osobuco",
+      "Guisos de cocción lenta",
+      "Quesos estacionados"
+    ],
     "learning": "El «sombrero» es la capa de pieles y semillas que flota durante la fermentación. Mantenerlo sumergido aumenta el contacto con el mosto y cambia la extracción de color, aroma y taninos."
   },
   {
@@ -71,7 +89,7 @@
     "rank": 3,
     "juanScore": 90,
     "rankReason": "Una propuesta singular de ensamblaje, con muy buen equilibrio entre potencia, fruta y jugosidad.",
-    "rankingUpdatedAt": "2026-08-26",
+    "rankingUpdatedAt": "2026-08-27",
     "name": "Jorge Rubio Premiado Malbec",
     "vintage": 2022,
     "winery": "Bodega Jorge Rubio",
@@ -96,7 +114,12 @@
     "aroma": "Frutos rojos y negros maduros, confituras, humo y notas balsámicas.",
     "palate": "Potente, equilibrado y envolvente, con taninos jugosos y final largo.",
     "servingAdvice": "Dale entre 30 y 45 minutos de aire y servilo a 16–18 °C.",
-    "pairing": ["Lomo al Strogonoff", "Cordero o carnes a la parrilla", "Guisos", "Empanadas y quesos duros"],
+    "pairing": [
+      "Lomo al Strogonoff",
+      "Cordero o carnes a la parrilla",
+      "Guisos",
+      "Empanadas y quesos duros"
+    ],
     "learning": "Criar una parte con madera y otra sin ella permite sumar textura y complejidad sin perder el centro frutal del Malbec. Después, el enólogo ensambla ambas partes buscando equilibrio."
   },
   {
@@ -104,7 +127,7 @@
     "rank": 4,
     "juanScore": 89,
     "rankReason": "El más fino y distintivo: sube por identidad de suelo, frescura y enorme valor para aprender sobre sutileza.",
-    "rankingUpdatedAt": "2026-08-26",
+    "rankingUpdatedAt": "2026-08-27",
     "name": "Manos Negras Red Soil Pinot Noir",
     "vintage": 2024,
     "winery": "Mil Suelos",
@@ -129,7 +152,12 @@
     "aroma": "Cerezas, frambuesas, flores secas, tierra, especias, hongos, té negro y hierbas.",
     "palate": "Fluido, fresco y sedoso, de cuerpo medio, con buena tensión y final mineral.",
     "servingAdvice": "Servilo apenas fresco, a 14–16 °C, y evitá una decantación larga.",
-    "pairing": ["Pato, cerdo o entraña", "Ñoquis con tomates cherry y alcaparras", "Berenjenas gratinadas", "Quesos de pasta tierna"],
+    "pairing": [
+      "Pato, cerdo o entraña",
+      "Ñoquis con tomates cherry y alcaparras",
+      "Berenjenas gratinadas",
+      "Quesos de pasta tierna"
+    ],
     "learning": "En Pinot Noir, las notas de tierra, té u hongos pueden ser parte de su complejidad. Un vino liviano de cuerpo también puede ser intenso en aromas y muy persistente."
   },
   {
@@ -137,7 +165,7 @@
     "rank": 5,
     "juanScore": 88,
     "rankReason": "Muy buen origen de altura y una crianza ambiciosa; todavía joven y sin respaldo crítico publicado para esta etiqueta.",
-    "rankingUpdatedAt": "2026-08-26",
+    "rankingUpdatedAt": "2026-08-27",
     "name": "Finca Las Divas Reserva",
     "vintage": 2024,
     "winery": "Huarpe Wines",
@@ -162,15 +190,59 @@
     "aroma": "Cerezas maduras, ciruelas, moras, arándanos, violetas y hierbas.",
     "palate": "Jugoso, envolvente y fluido, con frescura, tensión, taninos finos y final largo.",
     "servingAdvice": "Dale unos 30 minutos de aire y servilo a unos 16 °C.",
-    "pairing": ["Lasaña con salsa boloñesa", "Carnes grilladas", "Pastas rellenas", "Hongos asados"],
+    "pairing": [
+      "Lasaña con salsa boloñesa",
+      "Carnes grilladas",
+      "Pastas rellenas",
+      "Hongos asados"
+    ],
     "learning": "Un fudre es mucho más grande que una barrica. Al haber menos superficie de madera en contacto con el vino, suele aportar textura y evolución con menos sabor directo a roble."
   },
   {
-    "id": "pleno-terroir-blend-cabernet-sauvignon-2023",
+    "id": "gran-sombrero-corte-singular-red-blend-2025",
+    "name": "Gran Sombrero Corte Singular Red Blend",
+    "vintage": 2025,
+    "winery": "Huentala Wines",
+    "style": "Red Blend",
+    "region": "Gualtallary, Valle de Uco, Mendoza",
+    "composition": "50% Malbec, 50% Cabernet Franc",
+    "alcohol": null,
+    "altitude": null,
+    "soil": null,
+    "aging": "30% del corte por 9 meses en barricas de segundo uso",
+    "vinificationMethod": null,
+    "cellarUntil": 2030,
+    "appearance": "Rojo rubí intenso, con reflejos violáceos y buena concentración.",
+    "aroma": "Ciruela fresca, moras, frutos rojos y violetas; suma pimienta, hierbas de montaña, grafito y un toque de cacao.",
+    "palate": "Jugoso y fresco, de tensión marcada y taninos firmes pero amables. El Malbec aporta volumen frutal y el Cabernet Franc, especias y nervio; termina largo y equilibrado.",
+    "awards": [],
+    "sourceUrl": "https://bonvivir.com/la-cava-de-bonvivir/fichas-de-vinos/gran-sombrero-corte-singular-red-blend-2025",
+    "sourceImageUrl": "https://backwebbonvivir-media.glanacion.com/gran_sombrero_corte_singular_red_blend_2025_a4c902c1f4.png?resize-filter=lanczos3&auto=webp",
+    "shortNote": "Un corte joven y fresco que une la fruta del Malbec con la veta especiada del Cabernet Franc, sin volverse pesado.",
+    "didacticDescription": "Este blend sirve para reconocer cómo dos variedades se complementan: el Malbec da fruta y una textura amplia; el Cabernet Franc aporta perfume, especias y una sensación más vertical. La crianza parcial en madera usada busca redondear sin tapar esa frescura.",
+    "learning": "Probalo primero apenas servido y después de 20 minutos: fijate si las notas de violeta y hierbas ganan lugar cuando el vino toma aire. Es una forma simple de percibir el aporte del Cabernet Franc dentro de un corte.",
+    "pairing": [
+      "Papas y vegetales salteados",
+      "Cintas o papardelle con hongos",
+      "Bifecitos o carnes rojas a la plancha",
+      "Picada con jamón crudo y aceitunas"
+    ],
+    "servingAdvice": "Servilo a 16–17 °C y, si podés, dejalo 20 minutos en copa o decanter. Esa breve aireación ayuda a que se abran los aromas florales y herbales sin perder frescura.",
+    "accent": "Frescura, fruta y especias",
+    "juanScore": 87,
+    "rankReason": "Un blend joven bien resuelto, con identidad clara y buena tensión; queda por debajo de las etiquetas más complejas o evolucionadas de la cava, pero por encima del Cabernet más directo por su equilibrio y expresividad.",
+    "quantity": 1,
     "rank": 6,
+    "rankingUpdatedAt": "2026-08-27",
+    "addedAt": "2026-08-27",
+    "image": "/wines/gran-sombrero-corte-singular-red-blend-2025.png"
+  },
+  {
+    "id": "pleno-terroir-blend-cabernet-sauvignon-2023",
+    "rank": 7,
     "juanScore": 86,
     "rankReason": "Un Cabernet equilibrado, correcto y gastronómico, aunque menos singular y menos probado que las botellas que lo preceden.",
-    "rankingUpdatedAt": "2026-08-26",
+    "rankingUpdatedAt": "2026-08-27",
     "name": "Pleno Terroir Blend Cabernet Sauvignon",
     "vintage": 2023,
     "winery": "Cuarto Surco",
@@ -195,7 +267,12 @@
     "aroma": "Fruta negra, especias, grafito, hierbas y cassis.",
     "palate": "Buen carácter y estructura, taninos firmes de grano fino, frescura, balance y final largo.",
     "servingAdvice": "Abrilo unos 30 minutos antes y servilo a 16–18 °C.",
-    "pairing": ["Sorrentinos de hongos", "Pechito de ternera con vino y miel", "Papas y cebollas caramelizadas", "Brie o queso de oveja"],
+    "pairing": [
+      "Sorrentinos de hongos",
+      "Pechito de ternera con vino y miel",
+      "Papas y cebollas caramelizadas",
+      "Brie o queso de oveja"
+    ],
     "learning": "La madera de tercer o cuarto uso ya cedió gran parte de sus aromas. Sirve para acompañar la evolución y suavizar textura sin hacer que el vino sepa principalmente a roble."
   }
 ]
