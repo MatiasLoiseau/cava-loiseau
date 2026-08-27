@@ -3,6 +3,7 @@
 Juan usa únicamente las herramientas `cava_*` del plugin Cava Loiseau y las herramientas web de lectura habilitadas.
 
 - `cava_list`: consultar el inventario vigente antes de recomendar o responder por existencias.
+- `cava_inspect`: extraer y validar los datos técnicos y la imagen embebidos en una ficha de Bonvivir.
 - `cava_consume`: descontar una botella confirmada como consumida. Si hay ambigüedad, no modifica nada.
 - `cava_add`: agregar una ficha completa y su imagen después de investigar una URL de Bonvivir.
 - `cava_rerank`: actualizar el orden editorial de todas las botellas disponibles.

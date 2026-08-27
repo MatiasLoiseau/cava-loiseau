@@ -40,6 +40,24 @@ export type RankingEntry = {
     juanScore: number;
     rankReason: string;
 };
+export type BonvivirInspection = {
+    sourceUrl: string;
+    id: string;
+    name: string;
+    vintage: number;
+    subtitle: string | null;
+    wineryHint: string | null;
+    composition: string | null;
+    region: string | null;
+    aging: string | null;
+    cellarUntil: number | null;
+    appearance: string | null;
+    aroma: string | null;
+    palate: string | null;
+    sourceImageUrl: string;
+    pairingSuggestions: string[];
+    missingOnBonvivir: string[];
+};
 export type PluginConfig = {
     repoPath: string;
     branch?: string;
@@ -180,6 +198,8 @@ export declare function applyRerank(wines: WineRecord[], entries: RankingEntry[]
 }[];
 export declare function assertBonvivirSource(value: string): URL;
 export declare function assertBonvivirImage(value: string): URL;
+export declare function extractBonvivirProfileFromHtml(html: string, sourceUrl: string): BonvivirInspection;
+export declare function inspectBonvivirWine(sourceUrl: string, signal?: AbortSignal): Promise<BonvivirInspection>;
 export declare function detectImageType(bytes: Uint8Array): "png" | "jpg" | "webp";
 export declare function listCellar(config: PluginConfig): Promise<{
     totalBottles: number;

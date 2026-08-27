@@ -6,6 +6,7 @@ import {
   assertBonvivirSource,
   consumeInventory,
   detectImageType,
+  extractBonvivirProfileFromHtml,
   normalize,
   rankWines,
   resolveWineQuery,
@@ -99,4 +100,41 @@ test("acepta únicamente fuentes y bytes de imagen autorizados", () => {
   assert.throws(() => assertBonvivirImage("https://example.com/vino.png"));
   assert.equal(detectImageType(Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])), "png");
   assert.throws(() => detectImageType(Uint8Array.from([1, 2, 3, 4])));
+});
+
+test("extrae la ficha técnica embebida de Bonvivir aunque esté oculta en la vista", () => {
+  const data = {
+    wineCard: {
+      title: "Gran Sombrero Corte Singular Red Blend 2025 ",
+      subtitle: "Blend moderno.",
+      cellarLink: "huentala-wines",
+      wineImage: {
+        src: "https://backwebbonvivir-media.glanacion.com/gran_sombrero.png?auto=webp",
+      },
+    },
+    technicalProfile: [
+      { title: "Cosecha", description: "2025" },
+      { title: "Composición", description: "50% Malbec, 50% Cabernet Franc" },
+      { title: "Región", description: "Gualtallary, Valle de Uco - Mendoza" },
+      { title: "Crianza", description: "30% del corte por 9 meses en barricas de 2do uso" },
+      { title: "Potencial de guarda", description: "2030" },
+      { title: "Visual", description: "Rojo rubí intenso." },
+      { title: "En nariz", description: "Ciruelas, moras y violetas." },
+      { title: "En boca", description: "Jugoso, fresco y persistente." },
+    ],
+    miniPairings: [{ title: "Locro con cerdo y carnes rojas." }],
+  };
+  const html = `<script>{"wineProfileReducer":{"data":${JSON.stringify(data)}}}</script>`;
+  const result = extractBonvivirProfileFromHtml(
+    html,
+    "https://bonvivir.com/la-cava-de-bonvivir/fichas-de-vinos/gran-sombrero-corte-singular-red-blend-2025",
+  );
+
+  assert.equal(result.id, "gran-sombrero-corte-singular-red-blend-2025");
+  assert.equal(result.name, "Gran Sombrero Corte Singular Red Blend");
+  assert.equal(result.vintage, 2025);
+  assert.equal(result.wineryHint, "Huentala Wines");
+  assert.equal(result.composition, "50% Malbec, 50% Cabernet Franc");
+  assert.equal(result.cellarUntil, 2030);
+  assert.equal(result.pairingSuggestions[0], "Locro con cerdo y carnes rojas.");
 });

@@ -4,6 +4,7 @@ import { lstat, mkdir, readFile, realpath, rename, unlink, writeFile } from "nod
 import { basename, dirname, isAbsolute, join } from "node:path";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_HTML_BYTES = 4 * 1024 * 1024;
 const ALLOWED_REMOTES = new Set([
   "git@github.com:MatiasLoiseau/cava-loiseau.git",
   "https://github.com/MatiasLoiseau/cava-loiseau.git",
@@ -53,6 +54,25 @@ export type RankingEntry = {
   id: string;
   juanScore: number;
   rankReason: string;
+};
+
+export type BonvivirInspection = {
+  sourceUrl: string;
+  id: string;
+  name: string;
+  vintage: number;
+  subtitle: string | null;
+  wineryHint: string | null;
+  composition: string | null;
+  region: string | null;
+  aging: string | null;
+  cellarUntil: number | null;
+  appearance: string | null;
+  aroma: string | null;
+  palate: string | null;
+  sourceImageUrl: string;
+  pairingSuggestions: string[];
+  missingOnBonvivir: string[];
 };
 
 export type PluginConfig = { repoPath: string; branch?: string };
@@ -217,6 +237,174 @@ export function assertBonvivirImage(value: string) {
     throw new Error("La imagen debe provenir del CDN autorizado de Bonvivir.");
   }
   return url;
+}
+
+function readBoundedBody(response: Response, maxBytes: number, signal?: AbortSignal) {
+  if (!response.body) throw new Error("Bonvivir devolvió una respuesta vacía.");
+  const length = Number(response.headers.get("content-length") ?? 0);
+  if (length > maxBytes) throw new Error("La ficha de Bonvivir supera el límite permitido.");
+
+  return (async () => {
+    const reader = response.body!.getReader();
+    const chunks: Uint8Array[] = [];
+    let total = 0;
+    while (true) {
+      if (signal?.aborted) {
+        await reader.cancel();
+        throw new Error("La consulta a Bonvivir fue cancelada.");
+      }
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) {
+        await reader.cancel();
+        throw new Error("La ficha de Bonvivir supera el límite permitido.");
+      }
+      chunks.push(value);
+    }
+
+    const bytes = new Uint8Array(total);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    return new TextDecoder().decode(bytes);
+  })();
+}
+
+function extractJsonObject(source: string, start: number) {
+  if (source[start] !== "{") throw new Error("La ficha embebida de Bonvivir es inválida.");
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = start; index < source.length; index += 1) {
+    const character = source[index];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (character === "\\") escaped = true;
+      else if (character === '"') inString = false;
+      continue;
+    }
+    if (character === '"') inString = true;
+    else if (character === "{") depth += 1;
+    else if (character === "}") {
+      depth -= 1;
+      if (depth === 0) return source.slice(start, index + 1);
+    }
+  }
+  throw new Error("La ficha embebida de Bonvivir está incompleta.");
+}
+
+function optionalString(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function humanizeCellarSlug(value: unknown) {
+  const slug = optionalString(value);
+  if (!slug) return null;
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export function extractBonvivirProfileFromHtml(
+  html: string,
+  sourceUrl: string,
+): BonvivirInspection {
+  const source = assertBonvivirSource(sourceUrl);
+  const marker = '"wineProfileReducer":{"data":';
+  const markerIndex = html.indexOf(marker);
+  if (markerIndex < 0) {
+    throw new Error("Bonvivir no expuso una ficha técnica embebida para este vino.");
+  }
+
+  const objectStart = html.indexOf("{", markerIndex + marker.length);
+  const data = JSON.parse(extractJsonObject(html, objectStart)) as Record<string, unknown>;
+  const wineCard = (data.wineCard ?? {}) as Record<string, unknown>;
+  const wineImage = (wineCard.wineImage ?? {}) as Record<string, unknown>;
+  const image = optionalString(wineImage.src);
+  if (!image) throw new Error("La ficha de Bonvivir no incluye la imagen oficial del vino.");
+  assertBonvivirImage(image);
+
+  const rawTechnical = Array.isArray(data.technicalProfile) ? data.technicalProfile : [];
+  const technical = new Map<string, string>();
+  for (const item of rawTechnical) {
+    if (!item || typeof item !== "object") continue;
+    const entry = item as Record<string, unknown>;
+    const title = optionalString(entry.title);
+    const description = optionalString(entry.description);
+    if (title && description) technical.set(normalize(title), description);
+  }
+
+  const title = optionalString(wineCard.title);
+  const vintageText = technical.get("cosecha");
+  const vintage = Number(vintageText);
+  if (!title || !Number.isInteger(vintage) || vintage < 1900 || vintage > 2100) {
+    throw new Error("La ficha de Bonvivir no incluye un nombre y una cosecha válidos.");
+  }
+
+  const miniPairings = Array.isArray(data.miniPairings) ? data.miniPairings : [];
+  const pairingSuggestions = miniPairings.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const title = optionalString((item as Record<string, unknown>).title);
+    return title ? [title] : [];
+  });
+  const pairingCard = (data.pairingCard ?? {}) as Record<string, unknown>;
+  const featuredPairing = optionalString(pairingCard.title);
+  if (featuredPairing && !pairingSuggestions.some((item) => item.includes(featuredPairing))) {
+    pairingSuggestions.push(featuredPairing);
+  }
+
+  const cleanName = title.replace(new RegExp(`\\s+${vintage}\\s*$`), "").trim();
+  const pathParts = source.pathname.split("/").filter(Boolean);
+  const id = pathParts.at(-1)!;
+  const field = (name: string) => technical.get(normalize(name)) ?? null;
+
+  return {
+    sourceUrl: source.href,
+    id,
+    name: cleanName,
+    vintage,
+    subtitle: optionalString(wineCard.subtitle),
+    wineryHint: humanizeCellarSlug(wineCard.cellarLink),
+    composition: field("Composición"),
+    region: field("Región"),
+    aging: field("Crianza"),
+    cellarUntil: Number.isInteger(Number(field("Potencial de guarda")))
+      ? Number(field("Potencial de guarda"))
+      : null,
+    appearance: field("Visual"),
+    aroma: field("En nariz"),
+    palate: field("En boca"),
+    sourceImageUrl: image,
+    pairingSuggestions,
+    missingOnBonvivir: ["altitude", "soil", "alcohol", "awards"],
+  };
+}
+
+export async function inspectBonvivirWine(sourceUrl: string, signal?: AbortSignal) {
+  const source = assertBonvivirSource(sourceUrl);
+  const response = await fetch(source, {
+    signal,
+    redirect: "error",
+    headers: {
+      accept: "text/html,application/xhtml+xml",
+      "user-agent": "CavaLoiseau-Juan/1.0",
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`No se pudo consultar la ficha de Bonvivir (HTTP ${response.status}).`);
+  }
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("text/html")) {
+    throw new Error("Bonvivir no devolvió una ficha HTML válida.");
+  }
+  const html = await readBoundedBody(response, MAX_HTML_BYTES, signal);
+  return extractBonvivirProfileFromHtml(html, source.href);
 }
 
 export function detectImageType(bytes: Uint8Array) {

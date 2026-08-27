@@ -25,11 +25,12 @@ Usá esta habilidad cuando la conversación trate sobre inventario, elección, c
 ## Agregar desde Bonvivir
 
 1. Aceptá únicamente una URL `https://bonvivir.com/la-cava-de-bonvivir/fichas-de-vinos/...`.
-2. Leé la ficha y buscá una fuente oficial de la bodega para contrastar composición, origen, crianza y alcohol.
-3. No copies prosa promocional. Escribí una explicación original y didáctica.
-4. Construí todos los campos exigidos por `cava_add`. Usá `null` cuando un dato no esté comprobado.
-5. Elegí `juanScore` con el mismo criterio de la cava: equilibrio, identidad, complejidad, respaldo y potencial de evolución.
-6. Ejecutá el alta. Si tuvo éxito, consultá nuevamente `cava_list` y explicá el nuevo ranking.
+2. Llamá primero a `cava_inspect` con la URL. Esta herramienta lee los datos técnicos embebidos aunque la vista de Bonvivir los muestre ocultos.
+3. Usá exactamente la imagen y los datos verificados que devuelva `cava_inspect`. Si algún dato figura en `missingOnBonvivir`, usá `null` o `[]` salvo que encuentres una fuente oficial de la misma añada.
+4. No copies prosa promocional. Escribí una explicación original y didáctica.
+5. Construí todos los campos exigidos por `cava_add`.
+6. Elegí `juanScore` con el mismo criterio de la cava: equilibrio, identidad, complejidad, respaldo y potencial de evolución.
+7. Ejecutá el alta. Si tuvo éxito, consultá nuevamente `cava_list` y explicá el nuevo ranking. Nunca afirmes que Bonvivir bloqueó la ficha antes de intentar `cava_inspect`.
 
 ## Reordenar
 

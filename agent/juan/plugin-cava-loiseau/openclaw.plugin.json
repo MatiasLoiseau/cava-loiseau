@@ -28,6 +28,7 @@
   "contracts": {
     "tools": [
       "cava_list",
+      "cava_inspect",
       "cava_consume",
       "cava_add",
       "cava_rerank"
@@ -35,6 +36,9 @@
   },
   "toolMetadata": {
     "cava_list": {
+      "optional": true
+    },
+    "cava_inspect": {
       "optional": true
     },
     "cava_consume": {

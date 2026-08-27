@@ -5,6 +5,7 @@ Plugin de herramientas estrechas para que el agente Juan consulte y mantenga la 
 ## Herramientas
 
 - `cava_list`: lee inventario y ranking.
+- `cava_inspect`: extrae y valida la ficha técnica y la imagen oficial embebidas en Bonvivir.
 - `cava_consume`: descuenta una cantidad cuando la referencia identifica un único vino.
 - `cava_add`: agrega una ficha completa, descarga una imagen validada desde Bonvivir, recalcula el ranking y publica el cambio.
 - `cava_rerank`: actualiza puntajes y fundamentos exigiendo todos los vinos actuales exactamente una vez.

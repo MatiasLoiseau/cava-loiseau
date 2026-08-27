@@ -1,6 +1,6 @@
 import { Type } from "typebox";
 import { defineToolPlugin } from "openclaw/plugin-sdk/tool-plugin";
-import { addWine, consumeWine, listCellar, rerankCellar } from "./core.js";
+import { addWine, consumeWine, inspectBonvivirWine, listCellar, rerankCellar } from "./core.js";
 
 const NullableString = Type.Union([Type.String({ maxLength: 500 }), Type.Null()]);
 
@@ -91,6 +91,22 @@ export default defineToolPlugin({
       ),
       optional: true,
       execute: ({ query, quantity }, config) => consumeWine(config, query, quantity ?? 1),
+    }),
+    tool({
+      name: "cava_inspect",
+      label: "Investigar ficha de Bonvivir",
+      description: "Extrae y valida la ficha técnica y la imagen oficial embebidas en una URL de Bonvivir, incluso cuando la vista pública oculta los datos.",
+      parameters: Type.Object(
+        {
+          sourceUrl: Type.String({
+            pattern: "^https://bonvivir\\.com/la-cava-de-bonvivir/fichas-de-vinos/",
+            maxLength: 1000,
+          }),
+        },
+        { additionalProperties: false },
+      ),
+      optional: true,
+      execute: ({ sourceUrl }, _config, context) => inspectBonvivirWine(sourceUrl, context.signal),
     }),
     tool({
       name: "cava_add",
