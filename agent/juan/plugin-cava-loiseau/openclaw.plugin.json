@@ -1,0 +1,50 @@
+{
+  "id": "cava-loiseau",
+  "name": "Cava Loiseau",
+  "description": "Herramientas limitadas para administrar el inventario y ranking de Cava Loiseau.",
+  "activation": {
+    "onStartup": true
+  },
+  "configSchema": {
+    "type": "object",
+    "required": [
+      "repoPath"
+    ],
+    "properties": {
+      "repoPath": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^/"
+      },
+      "branch": {
+        "type": "string",
+        "default": "main",
+        "pattern": "^[A-Za-z0-9._/-]+$"
+      }
+    },
+    "additionalProperties": false
+  },
+  "version": "1.0.0",
+  "contracts": {
+    "tools": [
+      "cava_list",
+      "cava_consume",
+      "cava_add",
+      "cava_rerank"
+    ]
+  },
+  "toolMetadata": {
+    "cava_list": {
+      "optional": true
+    },
+    "cava_consume": {
+      "optional": true
+    },
+    "cava_add": {
+      "optional": true
+    },
+    "cava_rerank": {
+      "optional": true
+    }
+  }
+}

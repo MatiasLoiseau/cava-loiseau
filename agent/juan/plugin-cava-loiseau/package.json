@@ -1,0 +1,47 @@
+{
+  "name": "@cava-loiseau/openclaw-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Herramientas estrechas para que Juan administre Cava Loiseau sin acceso general al host.",
+  "files": [
+    "dist",
+    "src",
+    "openclaw.plugin.json",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/core.test.js",
+    "plugin:build": "npm run build && openclaw plugins build --entry ./dist/index.js",
+    "plugin:validate": "npm run plugin:build && openclaw plugins validate --entry ./dist/index.js"
+  },
+  "dependencies": {
+    "typebox": "1.1.39"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.19",
+    "openclaw": "2026.7.1-2",
+    "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.5.17"
+  },
+  "openclaw": {
+    "extensions": [
+      "./src/index.ts",
+      "./dist/index.js"
+    ],
+    "runtimeExtensions": [
+      "./dist/index.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.5.17",
+      "minGatewayVersion": "2026.5.17"
+    },
+    "build": {
+      "openclawVersion": "2026.7.1-2",
+      "pluginSdkVersion": "2026.7.1-2"
+    }
+  }
+}
