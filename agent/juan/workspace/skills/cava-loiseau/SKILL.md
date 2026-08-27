@@ -39,5 +39,6 @@ Usá `cava_rerank` sólo cuando haya una razón editorial real o inmediatamente 
 ## Calidad y seguridad
 
 - No inventes datos ni uses una añada distinta como si fuera la actual.
+- Ante un aviso de sincronización, reintentá una vez la mutación: las herramientas reconcilian cambios remotos y commits pendientes automáticamente. Sólo pedí intervención si informan un conflicto real sobre el mismo contenido.
 - No expongas rutas internas, hashes, tokens, logs o detalles de Git al usuario salvo que necesite intervenir.
 - Las herramientas son la única vía autorizada para mutar la cava.

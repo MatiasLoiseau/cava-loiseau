@@ -8,6 +8,7 @@ const ALLOWED_REMOTES = new Set([
     "git@github.com:MatiasLoiseau/cava-loiseau.git",
     "https://github.com/MatiasLoiseau/cava-loiseau.git",
 ]);
+const GENERATED_MANIFEST_PATH = "agent/juan/plugin-cava-loiseau/openclaw.plugin.json";
 const stopWords = new Set([
     "a", "al", "de", "del", "el", "la", "las", "lo", "los", "me", "mi", "un", "una",
     "vino", "botella", "tome", "tomo", "tomé", "ya",
@@ -23,6 +24,28 @@ export function normalize(value) {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, " ")
         .trim();
+}
+function canonicalJson(value, path = []) {
+    if (Array.isArray(value)) {
+        const items = value.map((item) => canonicalJson(item, path));
+        return path.join(".") === "contracts.tools"
+            ? [...items].sort((left, right) => String(left).localeCompare(String(right)))
+            : items;
+    }
+    if (!value || typeof value !== "object")
+        return value;
+    return Object.fromEntries(Object.entries(value)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, item]) => [key, canonicalJson(item, [...path, key])]));
+}
+export function arePluginManifestsSemanticallyEqual(left, right) {
+    try {
+        return JSON.stringify(canonicalJson(JSON.parse(left))) ===
+            JSON.stringify(canonicalJson(JSON.parse(right)));
+    }
+    catch {
+        return false;
+    }
 }
 function queryTokens(value) {
     return normalize(value)
@@ -423,6 +446,75 @@ async function ensureClean(repoPath) {
     if (status)
         throw new Error("El checkout tiene cambios pendientes; Juan no modificó nada.");
 }
+async function repairGeneratedManifestNoise(repoPath) {
+    const status = (await runGit(repoPath, ["status", "--porcelain", "--untracked-files=no"])).stdout
+        .split("\n")
+        .filter(Boolean);
+    const manifestStatus = status.find((line) => line.slice(3) === GENERATED_MANIFEST_PATH);
+    if (!manifestStatus || manifestStatus.slice(0, 2) !== " M")
+        return;
+    const worktree = await readFile(join(repoPath, GENERATED_MANIFEST_PATH), "utf8");
+    const head = (await runGit(repoPath, ["show", `HEAD:${GENERATED_MANIFEST_PATH}`])).stdout;
+    if (!arePluginManifestsSemanticallyEqual(worktree, head))
+        return;
+    await runGit(repoPath, ["restore", "--worktree", "--", GENERATED_MANIFEST_PATH]);
+}
+async function branchDistance(repoPath, branch) {
+    const output = (await runGit(repoPath, ["rev-list", "--left-right", "--count", `${branch}...origin/${branch}`])).stdout.trim();
+    const [ahead, behind] = output.split(/\s+/).map(Number);
+    if (!Number.isInteger(ahead) || !Number.isInteger(behind)) {
+        throw new Error("Git devolvió un estado de sincronización inválido.");
+    }
+    return { ahead, behind };
+}
+async function rebaseOntoRemote(repoPath, branch) {
+    try {
+        await runGit(repoPath, ["rebase", `origin/${branch}`], 60_000);
+    }
+    catch {
+        await runGit(repoPath, ["rebase", "--abort"]).catch(() => undefined);
+        throw new Error("GitHub y la copia de Ironforge cambiaron el mismo contenido. Juan conservó ambos trabajos, pero necesita revisión humana para decidir la combinación.");
+    }
+}
+async function prepareMutation(repository) {
+    await repairGeneratedManifestNoise(repository.repoPath);
+    await ensureClean(repository.repoPath);
+    try {
+        await runGit(repository.repoPath, ["fetch", "origin", repository.branch], 60_000);
+    }
+    catch {
+        throw new Error("Juan no pudo sincronizar la cava con GitHub; no modificó nada.");
+    }
+    const distance = await branchDistance(repository.repoPath, repository.branch);
+    if (distance.ahead > 0 && distance.behind > 0) {
+        await rebaseOntoRemote(repository.repoPath, repository.branch);
+        await runGit(repository.repoPath, ["push", "origin", repository.branch], 60_000).catch(() => {
+            throw new Error("Juan combinó los cambios, pero no pudo publicar los commits pendientes.");
+        });
+    }
+    else if (distance.behind > 0) {
+        await runGit(repository.repoPath, ["merge", "--ff-only", `origin/${repository.branch}`]);
+    }
+    else if (distance.ahead > 0) {
+        await runGit(repository.repoPath, ["push", "origin", repository.branch], 60_000).catch(() => {
+            throw new Error("Juan encontró commits locales pendientes, pero no pudo publicarlos en GitHub.");
+        });
+    }
+    await ensureClean(repository.repoPath);
+}
+async function retryPushAfterSync(repository) {
+    try {
+        await runGit(repository.repoPath, ["fetch", "origin", repository.branch], 60_000);
+        const distance = await branchDistance(repository.repoPath, repository.branch);
+        if (distance.behind > 0)
+            await rebaseOntoRemote(repository.repoPath, repository.branch);
+        await runGit(repository.repoPath, ["push", "origin", repository.branch], 60_000);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
 async function publishMutation(repository, originalData, changedPaths, message, newImagePath) {
     try {
         await runGit(repository.repoPath, ["add", "--", ...changedPaths]);
@@ -441,6 +533,8 @@ async function publishMutation(repository, originalData, changedPaths, message, 
         return { published: true, commit };
     }
     catch {
+        if (await retryPushAfterSync(repository))
+            return { published: true, commit };
         return {
             published: false,
             commit,
@@ -469,7 +563,7 @@ export async function listCellar(config) {
 export async function consumeWine(config, query, quantity = 1) {
     return enqueueMutation(async () => {
         const repository = await openRepository(config);
-        await ensureClean(repository.repoPath);
+        await prepareMutation(repository);
         const { text, wines } = await readCellar(repository.dataPath);
         const result = consumeInventory(wines, query, quantity);
         if (result.resolution.status !== "matched") {
@@ -494,7 +588,7 @@ export async function addWine(config, draft, signal) {
         assertBonvivirSource(draft.sourceUrl);
         assertBonvivirImage(draft.sourceImageUrl);
         const repository = await openRepository(config);
-        await ensureClean(repository.repoPath);
+        await prepareMutation(repository);
         const { text, wines } = await readCellar(repository.dataPath);
         if (wines.some((wine) => wine.id === draft.id || wine.sourceUrl === draft.sourceUrl)) {
             throw new Error("Ese vino ya existe en la cava.");
@@ -546,7 +640,7 @@ export async function addWine(config, draft, signal) {
 export async function rerankCellar(config, entries) {
     return enqueueMutation(async () => {
         const repository = await openRepository(config);
-        await ensureClean(repository.repoPath);
+        await prepareMutation(repository);
         const { text, wines } = await readCellar(repository.dataPath);
         const nextWines = applyRerank(wines, entries);
         const nextText = `${JSON.stringify(nextWines, null, 2)}\n`;

@@ -72,6 +72,7 @@ type QueryResolution = {
     status: "not_found";
 };
 export declare function normalize(value: string): string;
+export declare function arePluginManifestsSemanticallyEqual(left: string, right: string): boolean;
 export declare function resolveWineQuery(wines: WineRecord[], query: string): QueryResolution;
 export declare function rankWines(wines: WineRecord[], tieOrder?: string[]): {
     rank: number;

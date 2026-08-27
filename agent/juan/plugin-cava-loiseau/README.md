@@ -12,6 +12,8 @@ Plugin de herramientas estrechas para que el agente Juan consulte y mantenga la 
 
 Las mutaciones se serializan, usan escrituras seguras y sólo ejecutan Git mediante argumentos explícitos. El plugin rechaza repositorios, ramas, fuentes e imágenes fuera de la lista permitida. Si el push falla, conserva el commit local y lo informa como pendiente.
 
+Antes de cada mutación, el plugin limpia únicamente reordenamientos semánticamente idénticos del manifiesto generado, descarga cambios remotos, publica commits locales pendientes y hace rebase automático cuando no hay conflictos de contenido. Un conflicto real se aborta sin borrar ninguna de las dos versiones.
+
 ## Desarrollo
 
 ```bash

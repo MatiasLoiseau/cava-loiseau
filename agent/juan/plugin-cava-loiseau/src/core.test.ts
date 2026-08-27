@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   applyRerank,
+  arePluginManifestsSemanticallyEqual,
   assertBonvivirImage,
   assertBonvivirSource,
   consumeInventory,
@@ -137,4 +138,22 @@ test("extrae la ficha técnica embebida de Bonvivir aunque esté oculta en la vi
   assert.equal(result.composition, "50% Malbec, 50% Cabernet Franc");
   assert.equal(result.cellarUntil, 2030);
   assert.equal(result.pairingSuggestions[0], "Locro con cerdo y carnes rojas.");
+});
+
+test("tolera sólo reordenamientos semánticos del manifiesto generado", () => {
+  const left = JSON.stringify({
+    contracts: { tools: ["cava_list", "cava_inspect", "cava_add"] },
+    toolMetadata: { cava_list: { optional: true }, cava_inspect: { optional: true } },
+  });
+  const reordered = JSON.stringify({
+    toolMetadata: { cava_inspect: { optional: true }, cava_list: { optional: true } },
+    contracts: { tools: ["cava_add", "cava_list", "cava_inspect"] },
+  });
+  const changed = JSON.stringify({
+    contracts: { tools: ["cava_list", "cava_add"] },
+    toolMetadata: { cava_list: { optional: true }, cava_inspect: { optional: true } },
+  });
+
+  assert.equal(arePluginManifestsSemanticallyEqual(left, reordered), true);
+  assert.equal(arePluginManifestsSemanticallyEqual(left, changed), false);
 });
